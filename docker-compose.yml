@@ -1,0 +1,50 @@
+version: "3"
+
+services:
+  nuxt:
+    build: ./frontend
+    environment:
+      - VIRTUAL_HOST=prisms-lte.zer0g.com
+      - LETSENCRYPT_HOST=www.prisms-lte.zer0g.com
+      - LETSENCRYPT_EMAIL=rahsaf90@gmail.com
+      - SSL_POLICY=AWS-TLS-1-2-2017-01
+      - NODE_ENV=production
+      - NUXT_HOST=0.0.0.0
+    ports:
+      - 3000:3000
+
+  proxy:
+    build: ./nginx
+    restart: always
+    ports:
+      - 80:80
+      - 443:443
+    labels:
+      com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy: "true"
+    volumes:
+      - certs:/etc/nginx/certs:ro
+      - vhost.d:/etc/nginx/vhost.d
+      - html:/usr/share/nginx/html
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+    networks:
+      - proxy-tier
+
+  letsencrypt-companion:
+    image: jrcs/letsencrypt-nginx-proxy-companion
+    restart: always
+    volumes:
+      - certs:/etc/nginx/certs
+      - vhost.d:/etc/nginx/vhost.d
+      - html:/usr/share/nginx/html
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - proxy-tier
+    depends_on:
+      - proxy
+volumes:
+  certs:
+  vhost.d:
+  html:
+
+networks:
+  proxy-tier:

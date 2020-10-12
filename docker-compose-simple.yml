@@ -1,0 +1,19 @@
+version: "3"
+
+services:
+  nuxt:
+    build:
+      context: ./frontend
+    restart: always
+    ports:
+      - "3000:3000"
+    command: "yarn start"
+
+  nginx:
+    image: nginx:1.19
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+    depends_on:
+      - nuxt
