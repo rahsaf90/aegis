@@ -9,14 +9,14 @@ services:
     image: rahsaf90/aegis:frontend-latest
     environment:
       - VIRTUAL_HOST=prisms-lte.zer0g.com
-      - LETSENCRYPT_HOST=www.prisms-lte.zer0g.com
+      - VIRTUAL_PORT=3000
+      - LETSENCRYPT_HOST=prisms-lte.zer0g.com
       - LETSENCRYPT_EMAIL=rahsaf90@gmail.com
       - SSL_POLICY=AWS-TLS-1-2-2017-01
       - NODE_ENV=production
       - NUXT_HOST=0.0.0.0
-
-    ports:
-      - 3000:3000
+    expose:
+      - 3000
 
   proxy:
     build: ./nginx
