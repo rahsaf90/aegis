@@ -2,7 +2,11 @@ version: "3"
 
 services:
   nuxt:
-    build: ./frontend
+    build:
+      context: ./frontend
+      args:
+        - NUXT_API_URL=http://0.0.0.0:8413/api/
+    image: rahsaf90/aegis:frontend-latest
     environment:
       - VIRTUAL_HOST=prisms-lte.zer0g.com
       - LETSENCRYPT_HOST=www.prisms-lte.zer0g.com
@@ -10,11 +14,13 @@ services:
       - SSL_POLICY=AWS-TLS-1-2-2017-01
       - NODE_ENV=production
       - NUXT_HOST=0.0.0.0
+
     ports:
       - 3000:3000
 
   proxy:
     build: ./nginx
+    image: rahsaf90/aegis:proxy-latest
     restart: always
     ports:
       - 80:80
