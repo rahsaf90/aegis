@@ -35,7 +35,7 @@ services:
     build:
       context: ./frontend
       args:
-        - NUXT_API_URL=http://0.0.0.0:8413/api/
+        - NUXT_API_URL=https://prisms-lte.zer0g.com:8443/api/
     image: rahsaf90/aegis:frontend-latest
     environment:
       - VIRTUAL_HOST=prisms-lte.zer0g.com
@@ -49,7 +49,7 @@ services:
       - 3000
 
   proxy:
-    build: ./nginx
+    build: ./proxy
     image: rahsaf90/aegis:proxy-latest
     restart: always
     ports:
