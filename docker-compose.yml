@@ -5,6 +5,7 @@ services:
     build:
       context: ./backend
     image: rahsaf90/aegis:backend-latest
+      #registry.digitalocean.com/zi-impact-docker/zi-dom-api:latest
     command: gunicorn ZeroImpact.wsgi:application --bind 0.0.0.0:8413
     volumes:
       - static_volume:/home/zer0g/api/staticfiles
@@ -13,14 +14,14 @@ services:
       - 8413
     env_file:
       - ./.env.prod.api
-    depends_on:
-      - db
-  db:
-    image: postgres:12.0-alpine
-    volumes:
-      - postgres_data:/var/lib/postgresql/data/
-    env_file:
-      - ./.env.prod.db
+    # depends_on:
+    #   - db
+  # db:
+  #   image: postgres:12.0-alpine
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data/
+  #   env_file:
+  #     - ./.env.prod.db
   # nginx:
   #   build: ./nginx
   #   volumes:
@@ -36,7 +37,8 @@ services:
       context: ./frontend
       args:
         - NUXT_API_URL=https://prisms-lte.zer0g.com:8443/api/
-    image: rahsaf90/aegis:frontend-latest
+    image:  rahsaf90/aegis:frontend-latest
+      #registry.digitalocean.com/zi-impact-docker/zi-dom-web:latest
     env_file:
       - ./.env.prod.frontend
     expose:
@@ -45,6 +47,7 @@ services:
   proxy:
     build: ./proxy
     image: rahsaf90/aegis:proxy-latest
+      # registry.digitalocean.com/zi-impact-docker/zi-dom-proxy:latest
     restart: always
     ports:
       - 80:80
@@ -75,7 +78,7 @@ volumes:
   certs:
   vhost.d:
   html:
-  postgres_data:
+#  postgres_data:
   static_volume:
   media_volume:
 # networks:
