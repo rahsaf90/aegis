@@ -36,7 +36,7 @@ services:
     build:
       context: ./frontend
       args:
-        - NUXT_API_URL=https://prisms-lte.zer0g.com:8443/api/
+        - NUXT_API_URL=https://prisms.zer0g.com:8443/api/
     image:  rahsaf90/aegis:frontend-latest
       #registry.digitalocean.com/zi-impact-docker/zi-dom-web:latest
     env_file:
@@ -47,7 +47,7 @@ services:
   proxy:
     build: ./proxy
     image: rahsaf90/aegis:proxy-latest
-      # registry.digitalocean.com/zi-impact-docker/zi-dom-proxy:latest
+      # 
     restart: always
     ports:
       - 80:80
