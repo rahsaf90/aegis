@@ -6,7 +6,7 @@ services:
       context: ./backend
     image: rahsaf90/aegis:backend-latest
       #registry.digitalocean.com/zi-impact-docker/zi-dom-api:latest
-    command: gunicorn --config guncorn.conf.py
+    command: gunicorn --config /home/zer0g/api/guncorn.conf.py
     volumes:
       - static_volume:/home/zer0g/api/staticfiles
       - media_volume:/home/zer0g/api/mediafiles
