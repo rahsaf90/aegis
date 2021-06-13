@@ -20,7 +20,7 @@ services:
     build:
       context: ./frontend
       args:
-        - NUXT_API_URL=http://api:8413/api/
+        - NUXT_API_URL=/api/
     image:  rahsaf90/aegis:frontend-latest
       #registry.digitalocean.com/zi-impact-docker/zi-dom-web:latest
     env_file:
