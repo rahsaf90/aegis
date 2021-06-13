@@ -8,9 +8,9 @@ services:
       #registry.digitalocean.com/zi-impact-docker/zi-dom-api:latest
     command: gunicorn --config /home/zer0g/api/guncorn.conf.py
     volumes:
-      - static_volume:/home/zer0g/api/staticfiles
-      - media_volume:/home/zer0g/api/mediafiles
-      - logs:/var/log/
+      # - static_volume:/home/zer0g/api/staticfiles
+      # - media_volume:/home/zer0g/api/mediafiles
+      - ./logs:/var/log/
     expose:
       - 8413
     env_file:
@@ -27,7 +27,7 @@ services:
     env_file:
       - ./.env.prod.frontend
     volumes:
-      - logs:/var/log/
+      - ./logs:/var/log/
     expose:
       - 3000
     depends_on: 
@@ -72,7 +72,7 @@ volumes:
   certs:
   vhost.d:
   html:
-  static_volume:
-  media_volume:
+  # static_volume:
+  # media_volume:
   logs:
 
