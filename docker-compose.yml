@@ -44,9 +44,10 @@ services:
     labels:
       com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy: "true"
     volumes:
-      - ./proxy/certs:/etc/nginx/certs:ro
-      - ./proxy/vhost.d:/etc/nginx/vhost.d
-      - ./proxy/html:/usr/share/nginx/html
+      - certs:/etc/nginx/certs:ro
+      - vhost.d:/etc/nginx/vhost.d
+      - html:/usr/share/nginx/html
+      - acme:/etc/acme.sh
       - /var/run/docker.sock:/tmp/docker.sock:ro
     depends_on: 
       - nuxt
@@ -58,9 +59,10 @@ services:
     image: jrcs/letsencrypt-nginx-proxy-companion
     restart: always
     volumes:
-      - ./proxy/certs:/etc/nginx/certs
-      - ./proxy/vhost.d:/etc/nginx/vhost.d
-      - ./proxy/html:/usr/share/nginx/html
+      - certs:/etc/nginx/certs
+      - vhost.d:/etc/nginx/vhost.d
+      - html:/usr/share/nginx/html
+      - acme:/etc/acme.sh
       - /var/run/docker.sock:/var/run/docker.sock:ro
     # networks:
     #  - proxy-tier
@@ -68,6 +70,7 @@ services:
       - proxy
 volumes:
   certs:
+  acme:
   vhost.d:
   html:
   static_volume:
