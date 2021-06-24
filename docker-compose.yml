@@ -61,7 +61,7 @@ services:
     image: nginxproxy/acme-companion
     container_name: nginx-proxy-acme
     volumes_from:
-      - nginx-proxy
+      - proxy
     volumes:
       - certs:/etc/nginx/certs:rw
       - acme:/etc/acme.sh
