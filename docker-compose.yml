@@ -34,6 +34,7 @@ services:
   proxy:
     build: ./proxy
     image: rahsaf90/aegis:proxy-latest
+    container_name: nginx-proxy
       # 
     restart: always
     environment: 
@@ -41,13 +42,14 @@ services:
     ports:
       - 80:80
       - 443:443
-    labels:
-      com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy: "true"
+    # labels:
+    #   com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy: "true"
     volumes:
-      - certs:/etc/nginx/certs:ro
+      - conf:/etc/nginx/conf.d
       - vhost.d:/etc/nginx/vhost.d
       - html:/usr/share/nginx/html
-      - acme:/etc/acme.sh
+      - dhparam:/etc/nginx/dhparam
+      - certs:/etc/nginx/certs:ro
       - /var/run/docker.sock:/tmp/docker.sock:ro
     depends_on: 
       - nuxt
@@ -55,24 +57,36 @@ services:
     # networks:
     #  - proxy-tier
 
-  letsencrypt-companion:
-    image: jrcs/letsencrypt-nginx-proxy-companion
-    restart: always
+  acme-companion:
+    image: nginxproxy/acme-companion
+    container_name: nginx-proxy-acme
+    volumes_from:
+      - nginx-proxy
     volumes:
-      - certs:/etc/nginx/certs
-      - vhost.d:/etc/nginx/vhost.d
-      - html:/usr/share/nginx/html
+      - certs:/etc/nginx/certs:rw
       - acme:/etc/acme.sh
       - /var/run/docker.sock:/var/run/docker.sock:ro
-    # networks:
-    #  - proxy-tier
-    depends_on:
-      - proxy
+
+  # letsencrypt-companion:
+  #   image: jrcs/letsencrypt-nginx-proxy-companion
+  #   restart: always
+  #   volumes:
+  #     - certs:/etc/nginx/certs
+  #     - vhost.d:/etc/nginx/vhost.d
+  #     - html:/usr/share/nginx/html
+  #     - acme:/etc/acme.sh
+  #     - /var/run/docker.sock:/var/run/docker.sock:ro
+  #   # networks:
+  #   #  - proxy-tier
+  #   depends_on:
+  #     - proxy
 volumes:
-  certs:
-  acme:
+  conf:
   vhost.d:
   html:
+  dhparam:
+  certs:
+  acme:
   static_volume:
   media_volume:
   logs_volume:
