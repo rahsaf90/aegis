@@ -30,6 +30,9 @@ services:
       - 3000
     depends_on: 
       - api
+    secrets:
+      - GOOGLE_API_KEY
+
 
   proxy:
     build: ./proxy
@@ -91,3 +94,6 @@ volumes:
   media_volume:
   logs_volume:
 
+secrets:
+  GOOGLE_API_KEY:
+    file: ./.secrets/google_api_key.txt
