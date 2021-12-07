@@ -1,0 +1,99 @@
+version: "3"
+
+services:
+  api:
+    build:
+      context: ./backend
+    image: rahsaf90/aegis:backend-latest
+      #registry.digitalocean.com/zi-impact-docker/zi-dom-api:latest
+    command: gunicorn --config /home/zer0g/api/gunicorn.conf.py
+    volumes:
+      - logs_volume:/home/zer0g/api/logs
+      - static_volume:/home/zer0g/api/staticfiles
+      - media_volume:/home/zer0g/api/mediafiles
+    expose:
+      - 8413
+    env_file:
+      - ./.env.prod.api
+
+
+  nuxt:
+    build:
+      context: ./frontend
+      args:
+        - NUXT_API_URL=/backend/api/
+    image:  rahsaf90/aegis:frontend-latest
+      #registry.digitalocean.com/zi-impact-docker/zi-dom-web:latest
+    env_file:
+      - ./.env.prod.frontend
+    expose:
+      - 3000
+    depends_on: 
+      - api
+    secrets:
+      - GOOGLE_API_KEY
+
+
+  proxy:
+    build: ./proxy
+    image: rahsaf90/aegis:proxy-latest
+    container_name: nginx-proxy
+      # 
+    restart: always
+    environment: 
+      - DEFAULT_HOST=firm.zer0g.com
+    ports:
+      - 80:80
+      - 443:443
+    # labels:
+    #   com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy: "true"
+    volumes:
+      - conf:/etc/nginx/conf.d
+      - vhost.d:/etc/nginx/vhost.d
+      - html:/usr/share/nginx/html
+      - dhparam:/etc/nginx/dhparam
+      - certs:/etc/nginx/certs:ro
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+    depends_on: 
+      - nuxt
+      - api
+    # networks:
+    #  - proxy-tier
+
+  acme-companion:
+    image: nginxproxy/acme-companion
+    container_name: nginx-proxy-acme
+    volumes_from:
+      - proxy
+    volumes:
+      - certs:/etc/nginx/certs:rw
+      - acme:/etc/acme.sh
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+  # letsencrypt-companion:
+  #   image: jrcs/letsencrypt-nginx-proxy-companion
+  #   restart: always
+  #   volumes:
+  #     - certs:/etc/nginx/certs
+  #     - vhost.d:/etc/nginx/vhost.d
+  #     - html:/usr/share/nginx/html
+  #     - acme:/etc/acme.sh
+  #     - /var/run/docker.sock:/var/run/docker.sock:ro
+  #   # networks:
+  #   #  - proxy-tier
+  #   depends_on:
+  #     - proxy
+volumes:
+  conf:
+  vhost.d:
+  html:
+  dhparam:
+  certs:
+  acme:
+  static_volume:
+  media_volume:
+  logs_volume:
+
+secrets:
+  GOOGLE_API_KEY:
+    file: ./.secrets/google_api_key.txt
