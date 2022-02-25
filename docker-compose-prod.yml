@@ -7,9 +7,9 @@ services:
     image: rahsaf90/aegis:backend-prod #registry.digitalocean.com/zi-impact-docker/zi-dom-api:latest
     command: gunicorn --config /home/zer0g/api/gunicorn.conf.py
     volumes:
-      - logs_volume:/home/zer0g/api/logs
-      - static_volume:/home/zer0g/api/staticfiles
-      - media_volume:/home/zer0g/api/mediafiles
+      - logs_volume:/home/zer0g/api/logs:rw
+      - static_volume:/home/zer0g/api/staticfiles:rw
+      - media_volume:/home/zer0g/api/mediafiles:rw
     expose:
       - 8413
     env_file:
