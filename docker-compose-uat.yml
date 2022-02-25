@@ -4,41 +4,36 @@ services:
   api:
     build:
       context: ./backend
-    image: rahsaf90/aegis:backend-latest
-      #registry.digitalocean.com/zi-impact-docker/zi-dom-api:latest
+    image: rahsaf90/aegis:backend-latest #registry.digitalocean.com/zi-impact-docker/zi-dom-api:latest
     command: gunicorn --config /home/zer0g/api/gunicorn.conf.py
     volumes:
-      - logs_volume:/home/zer0g/api/logs
-      - static_volume:/home/zer0g/api/staticfiles
-      - media_volume:/home/zer0g/api/mediafiles
+      - logs_volume:/home/zer0g/api/logs:rw
+      - static_volume:/home/zer0g/api/staticfiles:rw
+      - media_volume:/home/zer0g/api/mediafiles:rw
     expose:
       - 8413
     env_file:
       - ./.env.prod.api
-
 
   nuxt:
     build:
       context: ./frontend
       args:
         - NUXT_API_URL=/backend/api/
-    image:  rahsaf90/aegis:frontend-latest
-      #registry.digitalocean.com/zi-impact-docker/zi-dom-web:latest
+    image: rahsaf90/aegis:frontend-latest #registry.digitalocean.com/zi-impact-docker/zi-dom-web:latest
     env_file:
       - ./.env.prod.frontend
     expose:
       - 3000
-    depends_on: 
+    depends_on:
       - api
     secrets:
       - GOOGLE_API_KEY
 
-
   proxy:
     build: ./proxy
     image: rahsaf90/aegis:proxy-latest
-    container_name: nginx-proxy
-      # 
+    container_name: nginx-proxy # 
     restart: always
     # environment: 
     #   - DEFAULT_HOST=prisms.zer0g.com
@@ -56,7 +51,7 @@ services:
       - dhparam:/etc/nginx/dhparam
       - certs:/etc/nginx/certs:ro
       - /var/run/docker.sock:/tmp/docker.sock:ro
-    depends_on: 
+    depends_on:
       - nuxt
       - api
     # networks:
@@ -71,7 +66,6 @@ services:
       - certs:/etc/nginx/certs:rw
       - acme:/etc/acme.sh
       - /var/run/docker.sock:/var/run/docker.sock:ro
-
   # letsencrypt-companion:
   #   image: jrcs/letsencrypt-nginx-proxy-companion
   #   restart: always
